@@ -4,41 +4,6 @@ puzzle, using TKinter as a gui"""
 from random import sample, choice, shuffle, randint
 from tkinter import Tk, Label, Button, Entry, StringVar, W, E
 
-def get_starting_setup_322(args):
-    """Generate the starting positions of the wagons."""
-
-    # Copy the wagons list for convenience
-    wagons = args.wagons
-
-    # The long siding can contain either 2 or 3 wagons.
-    num_long = randint(2, 3)
-
-    if num_long == 2:
-        num_short_1 = 2
-        num_short_2 = 2
-
-    if num_long == 3:
-        fill_mid = choice([True, False])
-        if fill_mid:
-            num_short_1 = 2
-            num_short_2 = 1
-        if not fill_mid:
-            num_short_1 = 1
-            num_short_2 = 2
-
-    # Randomise the order of the wagons
-    shuffle(wagons)
-
-    # Slice the shuffled list to get the wagons to go in each siding
-    long_siding = wagons[0:num_long]
-    short_1 = wagons[num_long:num_long+num_short_1]
-    short_2 = wagons[num_long+num_short_1:]
-
-    print("The starting setup is:")
-    print("Long siding:         " + str(long_siding))
-    print("First short siding:  " + str(short_1))
-    print("Second short siding: " + str(short_2))
-
 def get_starting_setup_533(args):
     """Generate the starting positions of the wagons."""
 
@@ -99,8 +64,22 @@ class Inglenook:
         self.targ3 = None
         self.targ4 = None
 
-        self.targ_lab_text = StringVar()
-        self.target_label = Label(master, textvariable=self.targ_lab_text)
+        self.targ_arr_lab_text = StringVar()
+        self.target_arr_label = Label(master, textvariable=self.targ_arr_lab_text)
+
+        self.target_label = Label(master, text="Target arrangement:")
+
+        self.long_lab = Label(master, text="Long siding start:")
+        self.start_arr_long_lab_text = StringVar()
+        self.start_arr_long_lab = Label(master, textvariable=self.start_arr_long_lab_text)
+
+        self.short1_lab = Label(master, text="First siding start:")
+        self.start_arr_short1_lab_text = StringVar()
+        self.start_arr_short1_lab = Label(master, textvariable=self.start_arr_short1_lab_text)
+
+        self.short2_lab = Label(master, text="Second siding start:")
+        self.start_arr_short2_lab_text = StringVar()
+        self.start_arr_short2_lab = Label(master, textvariable=self.start_arr_short2_lab_text)
 
         # Button to set the type of inglenook.
         # Ready to go once the code works...
@@ -134,44 +113,95 @@ class Inglenook:
 
         self.generate_button.grid(row=2, column=0)
 
-        self.target_label.grid(row=3, column=0)
+        self.target_label.grid(row=3, column=0, sticky=W)
+        self.target_arr_label.grid(row=3, column=1, sticky=W)
+
+        self.long_lab.grid(row=4, column=0, sticky=W)
+        self.start_arr_long_lab.grid(row=4, column=1, sticky=W)
+
+        self.short1_lab.grid(row=5, column=0, sticky=W)
+        self.start_arr_short1_lab.grid(row=5, column=1, sticky=W)
+
+        self.short2_lab.grid(row=6, column=0, sticky=W)
+        self.start_arr_short2_lab.grid(row=6, column=1, sticky=W)
 
     def generate(self):
         """Generate the start and end positions"""
-        print("Getting wagons")
         self.get_wags()
-        print("Got wagons")
         self.get_target()
-        print("Got target")
+        self.get_starting_setup_322()
 
     def get_wags(self):
         """Get the entered wagons"""
-        self.wag1 = self.entry1.get()
-        self.wag2 = self.entry2.get()
-        self.wag3 = self.entry3.get()
-        self.wag4 = self.entry4.get()
-        self.wag5 = self.entry5.get()
-        self.wag6 = self.entry6.get()
+
+        # This maybe could be in a validate function?
+        if self.entry1.get() is not '':
+            self.wag1 = self.entry1.get()
+        if self.entry2.get() is not '':
+            self.wag2 = self.entry2.get()
+        if self.entry3.get() is not '':
+            self.wag3 = self.entry3.get()
+        if self.entry4.get() is not '':
+            self.wag4 = self.entry4.get()
+        if self.entry5.get() is not '':
+            self.wag5 = self.entry5.get()
+        if self.entry6.get() is not '':
+            self.wag6 = self.entry6.get()
 
     def get_target(self):
         """Set the target train to be assembled. Length depends on the type of
         inglenook"""
+
         wagons = [self.wag1, self.wag2, self.wag3, self.wag4, self.wag5,
                   self.wag6]
         target = sample(wagons, 4)
-        print(target[0])
         self.targ1 = target[0]
         self.targ2 = target[1]
         self.targ3 = target[2]
         self.targ4 = target[3]
 
-        self.targ_lab_text.set(', '.join(target))
+        self.targ_arr_lab_text.set(', '.join(target))
 
+        # Might work to set up different types...
         # if self.ing_type == '322':
         #     wagons = [wag1, wag2, wag3, wag4, wag5, wag6]
         #     self.target = sample(wagons, 4)
         # else:
         #     self.target = sample(wagons, 5)
+
+    def get_starting_setup_322(self):
+        """Generate the starting positions of the wagons."""
+
+        wagons = [self.wag1, self.wag2, self.wag3, self.wag4, self.wag5,
+                  self.wag6]
+
+        # The long siding can contain either 2 or 3 wagons.
+        num_long = randint(2, 3)
+
+        if num_long == 2:
+            num_short_1 = 2
+            num_short_2 = 2
+
+        if num_long == 3:
+            fill_mid = choice([True, False])
+            if fill_mid:
+                num_short_1 = 2
+                num_short_2 = 1
+            if not fill_mid:
+                num_short_1 = 1
+                num_short_2 = 2
+
+        # Randomise the order of the wagons
+        shuffle(wagons)
+
+        # Slice the shuffled list to get the wagons to go in each siding
+        long_siding = wagons[0:num_long]
+        short_1 = wagons[num_long:num_long+num_short_1]
+        short_2 = wagons[num_long+num_short_1:]
+
+        self.start_arr_long_lab_text.set(', '.join(long_siding))
+        self.start_arr_short1_lab_text.set(', '.join(short_1))
+        self.start_arr_short2_lab_text.set(', '.join(short_2))
 
 
 root = Tk()
