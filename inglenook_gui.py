@@ -54,11 +54,11 @@ class Inglenook:
         self.ing_332_button = Radiobutton(master, text="322",
                                           variable=self.ing_type,
                                           value=322,
-                                          command=self.draw_boxes)
+                                          command=self.change_type)
         self.ing_533_button = Radiobutton(master, text="533",
                                           variable=self.ing_type,
                                           value=533,
-                                          command=self.draw_boxes)
+                                          command=self.change_type)
 
         # self.entry1 = Entry(master)
         # self.entry2 = Entry(master)
@@ -102,6 +102,35 @@ class Inglenook:
         self.ing_332_button.grid(row=7, column=0)
         self.ing_533_button.grid(row=7, column=1)
 
+    def change_type(self):
+        """Change the type of Inglenook to generate for"""
+
+        self.wag1 = "A"
+        self.wag2 = "B"
+        self.wag3 = "C"
+        self.wag4 = "D"
+        self.wag5 = "E"
+        self.wag6 = "F"
+        self.wag7 = "G"
+        self.wag8 = "H"
+
+        # There are four targets for a 322 and 5 for a 533
+        self.targ1 = None
+        self.targ2 = None
+        self.targ3 = None
+        self.targ4 = None
+        self.targ5 = None
+
+        # Update the number of entry boxes
+        self.draw_boxes()
+
+        # Reset the target and starting position text.
+        self.targ_arr_lab_text.set('')
+        self.start_arr_long_lab_text.set('')
+        self.start_arr_short1_lab_text.set('')
+        self.start_arr_short2_lab_text.set('')
+
+
     def draw_boxes(self):
         """Draw the entry boxes for the wagons"""
 
@@ -129,7 +158,6 @@ class Inglenook:
             self.entry8.grid(row=1, column=3)
         # Hide them if not
         if self.ing_type.get() == 322:
-            print(self.ing_type.get())
             self.entry7.grid_remove()
             self.entry8.grid_remove()
 
@@ -255,11 +283,12 @@ class Inglenook:
         # If there are three or more wagons in the long siding, then the total
         # number in the short sidings is 8 - num_long
         if num_long >= 3:
-            # If there are five wagons in the long siding, mid can have 0 to
-            # 3 wagons: minimum of 8 - (num_long + 3)
-            # If there are four in the long siding, mid must have at least one
-            # wagon in: 8 - (num_long + 3)
-            # If there are three in the long siding, mid must have at least two in:
+            # If there are five wagons in the long siding, mid can have 0 to 3
+            # wagons: minimum of 8 - (num_long + 3) If there are four in the
+            # long siding, mid must have at least one wagon in:
+            # 8 - (num_long + 3)
+            # If there are three in the long siding, mid must have at least
+            # two in:
             # 8 - (num_long + 3)
 
             min_short = 8 - (num_long + 3)
@@ -274,10 +303,9 @@ class Inglenook:
         short_1 = wagons[num_long: num_long+num_short_1]
         short_2 = wagons[num_long+num_short_1: ]
 
-        print("The starting setup is:")
-        print("Long siding:         " + str(long_siding))
-        print("First short siding:  " + str(short_1))
-        print("Second short siding: " + str(short_2))
+        self.start_arr_long_lab_text.set(', '.join(long_siding))
+        self.start_arr_short1_lab_text.set(', '.join(short_1))
+        self.start_arr_short2_lab_text.set(', '.join(short_2))
 
 
 root = Tk()
